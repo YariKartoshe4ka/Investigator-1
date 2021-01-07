@@ -1,0 +1,134 @@
+<MainScreen>:
+    ActionBar:
+        pos_hint: {'top': 1}
+
+        ActionView:
+            use_separator: True
+            ActionPrevious:
+                title: 'iClient'
+                with_previous: False
+
+            ActionButton:
+                icon: 'icons/online_false.png'
+                size: (30, 30)
+                id: online
+
+            ActionGroup:
+                ActionButton:
+                    text: 'Stream'
+                    on_press:
+                        root.stream()
+
+            ActionGroup:
+                ActionButton:
+                    text: 'Settings'
+                    on_press:
+                        root.manager.current = 'settings'
+
+    BoxLayout:
+
+        AnchorLayout:
+            anchor_x: 'left'
+            anchor_y: 'bottom'
+
+            # Support panel
+            AnchorLayout:
+                anchor_x: 'left'
+                anchor_y: 'center'
+
+                BoxLayout:
+                    size_hint: (0.5, 0.5)
+
+                    Slider:
+                        orientation: 'vertical'
+                        size_hint_x: 0.3
+                        min: 0
+                        max: 255
+
+                        on_touch_up:
+                            if args[1].grab_current == self: root.send(f'speed {round(self.value)}')
+
+                    BoxLayout:
+                        orientation: 'vertical'
+                        spacing: 3
+                        padding: 3
+                        size_hint_x: 0.4
+
+                        Button:
+                            text: '/\\'
+                            font_size: '20sp'
+                            on_press:
+                                root.send('camera up')
+
+                            on_release:
+                                root.send('camera stop')
+
+                        Button:
+                            text: '\\/'
+                            font_size: '20sp'
+                            on_press:
+                                root.send('camera down')
+
+                            on_release:
+                                root.send('camera stop')
+
+                        Switch:
+                            size_hint: (1, 0.5)
+
+                            on_active:
+                                if self.active: root.send('light on')
+                                else: root.send('light off')
+
+            # Left & Rgiht panel
+            BoxLayout:
+                spacing: 3
+                padding: 3
+                size_hint: (0.6, 0.2)
+
+                Button:
+                    text: '<'
+                    font_size: '30sp'
+                    on_press:
+                        root.send('direction left')
+
+                    on_release:
+                        root.send('direction stop')
+
+                Button:
+                    text: '>'
+                    font_size: '30sp'
+                    on_press:
+                        root.send('direction right')
+
+
+                    on_release:
+                        root.send('direction stop')
+
+        # Forward & Backward panel
+        AnchorLayout:
+            anchor_x: 'right'
+            anchor_y: 'bottom'
+
+            BoxLayout:
+                spacing: 3
+                padding: 3
+                size_hint: (0.6, 0.2)
+
+                Button:
+                    text: '\\/'
+                    font_size: '20sp'
+                    on_press:
+                        root.send('motor backward')
+
+                    on_release:
+                        root.send('motor stop')
+
+                Button:
+                    text: '/\\'
+                    font_size: '20sp'
+                    on_press:
+                        root.send('motor forward')
+
+                    on_release:
+                        root.send('motor stop')
+

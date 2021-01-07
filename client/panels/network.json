@@ -1,0 +1,16 @@
+[
+    {
+        "type": "string",
+        "title": "Host",
+        "desc": "Host of Investigator-1",
+        "section": "network",
+        "key": "host"
+    },
+    {
+        "type": "numeric",
+        "title": "Port",
+        "desc": "Port of Investigator-1 (default: 80)",
+        "section": "network",
+        "key": "port"
+    }
+]

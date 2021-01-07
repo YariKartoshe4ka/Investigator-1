@@ -1,0 +1,13 @@
+--requirements python3,kivy==2.0.0rc1,urllib3
+--blacklist-requirements sqlite3
+--sdk-dir /home/yaroslav/Android/Sdk/
+--ndk-dir /home/yaroslav/android-ndk-r19c/
+--android_api 28
+--bootstrap sdl2
+--private /home/yaroslav/Programming/Arduino/investigator/client/
+--package com.yarikartoshe4ka.iclient
+--name iClient
+--version 1.0.0
+--icon /home/yaroslav/Programming/Arduino/investigator/client/icon.png
+--orientation landscape
+--permission READ_EXTERNAL_STORAGE WRITE_EXTERNAL_STORAGE
