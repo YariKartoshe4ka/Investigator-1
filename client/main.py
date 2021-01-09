@@ -42,7 +42,7 @@ class MainScreen(Screen):
         host = root.config.get('network', 'host')
         port = root.config.get('network', 'port')
 
-        open(f'http://{host}:{port}/camera')
+        open(f'http://{host}:{port}/')
 
 
 

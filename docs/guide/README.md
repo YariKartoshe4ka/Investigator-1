@@ -1,9 +1,15 @@
 # Guide
 
 1. [Preparing](#preparing)
-    1. [Getting components](#getting-components)
-    2. [Setup Arduino IDE](#arduino-ide)
+    - [Getting components](#getting-components)
+    - [Setup Arduino IDE](#arduino-ide)
+        - [ESP32-CAM](#esp32-cam)
+        - [Arduino Uno](#arduino-uno)
+2. [Building](#building)
+    - [Flashing ESP32-CAM](#flashing-esp32-cam)
 
+
+<hr>
 
 # Preparing
 
@@ -19,11 +25,33 @@ I ordered all the components on AliExpress. This is full price-list of it:
 - [L298N motor driver](components/l298n_motor_driver.jpg) \~1.5$
 - [SG90](components/sg90.jpg) \~1.2$
 - [BreadBoard mini](components/breadboard_mini.jpg) \~0.5$
-- [Case for 18650 battery](components/case_for_18650_battery.jpg) \~1$
-- [Wire USB to DC 5.5mm](components/wire_usb_to_dc_5.5mm.jpg) \~0.8$
-- [18650 battery](components/18650_battery.jpg) \~ 2.5$
+- [18650 battery](components/18650_battery.jpg) \~2.5$ (if you have got small power bank, you can use it instead of this)
+- [Case for 18650 battery](components/case_for_18650_battery.jpg) \~1$ (if you have got small power bank, you can use it instead of this)
+- [Wire USB to DC 5.5mm](components/wire_usb_to_dc_5.5mm.jpg) \~0.8$ (you can use default [USB A to USB B wire](components/wire_usb_a_to_usb_b.jpg) =$0 (included in arduino uno), instead of this)
 - [Leds](components/leds.jpg) \~1$
+- [Toggle switch button](components/toggle_switch_button.jpg) =0$ (included in chassis)
 
 Full price is: \~40.5$
 
 ### Setup Arduino IDE
+
+###### ESP32-CAM
+
+I found [easy guide](https://www.youtube.com/watch?v=0LIhTLsOLbA) how configure Arduino IDE for ESP32-CAM. Now you only need install ESP32-CAM library<br>
+
+###### Arduino Uno
+
+You only need to install the L298N library from [here](https://github.com/AndreaLombardo/L298N)
+
+
+<hr>
+
+
+# Building
+
+### Flashing ESP32-CAM
+
+Open [this sketch](../../arduino/esp32-cam/esp32-cam.ino) and flash it with [previous guide](#esp32-cam) on youtube<br>
+This is schema for flashing ESP32-CAM
+
+<img src="../schema/esp32-cam_uno.png">
