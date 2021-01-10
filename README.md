@@ -5,7 +5,7 @@
 
 ### About
 
-My first arduino robot. It has a camera and [remote control](docs/client/README.md)
+My first arduino robot. It has a camera and [remote control](client/)
 
 
 ### Guide

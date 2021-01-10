@@ -42,7 +42,7 @@ python3 main.py
 
 ### Review
 
-<img src="./iclient.png">
+<img src="../docs/client/iclient.png">
 
 
 ### Configuration

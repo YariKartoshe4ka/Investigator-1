@@ -722,7 +722,7 @@ String* readWiFiConfig(fs::FS &fs, const char * path){
     while(file.available()){
         symbol = file.read();
         if(symbol == '\n')
-            index++;
+            index = 1;
         else
             out[index] += symbol;
     }
