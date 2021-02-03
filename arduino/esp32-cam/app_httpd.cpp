@@ -1,3 +1,5 @@
+
+
 // Copyright 2015-2016 Espressif Systems (Shanghai) PTE LTD
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -170,7 +172,7 @@ static int run_face_recognition(dl_matrix3du_t *image_matrix, box_array_t *net_b
 
     aligned_face = dl_matrix3du_alloc(1, FACE_WIDTH, FACE_HEIGHT, 3);
     if(!aligned_face){
-        Serial.println("Could not allocate face recognition buffer");
+        // Serial.println("Could not allocate face recognition buffer");
         return matched_id;
     }
     if (align_face(net_boxes, image_matrix, aligned_face) == ESP_OK){
@@ -178,27 +180,27 @@ static int run_face_recognition(dl_matrix3du_t *image_matrix, box_array_t *net_b
             int8_t left_sample_face = enroll_face(&id_list, aligned_face);
 
             if(left_sample_face == (ENROLL_CONFIRM_TIMES - 1)){
-                Serial.printf("Enrolling Face ID: %d\n", id_list.tail);
+                // Serial.printf("Enrolling Face ID: %d\n", id_list.tail);
             }
-            Serial.printf("Enrolling Face ID: %d sample %d\n", id_list.tail, ENROLL_CONFIRM_TIMES - left_sample_face);
+            // Serial.printf("Enrolling Face ID: %d sample %d\n", id_list.tail, ENROLL_CONFIRM_TIMES - left_sample_face);
             rgb_printf(image_matrix, FACE_COLOR_CYAN, "ID[%u] Sample[%u]", id_list.tail, ENROLL_CONFIRM_TIMES - left_sample_face);
             if (left_sample_face == 0){
                 is_enrolling = 0;
-                Serial.printf("Enrolled Face ID: %d\n", id_list.tail);
+                // Serial.printf("Enrolled Face ID: %d\n", id_list.tail);
             }
         } else {
             matched_id = recognize_face(&id_list, aligned_face);
             if (matched_id >= 0) {
-                Serial.printf("Match Face ID: %u\n", matched_id);
+                // Serial.printf("Match Face ID: %u\n", matched_id);
                 rgb_printf(image_matrix, FACE_COLOR_GREEN, "Hello Subject %u", matched_id);
             } else {
-                Serial.println("No Match Found");
+                // Serial.println("No Match Found");
                 rgb_print(image_matrix, FACE_COLOR_RED, "Intruder Alert!");
                 matched_id = -1;
             }
         }
     } else {
-        Serial.println("Face Not Aligned");
+        // Serial.println("Face Not Aligned");
         //rgb_print(image_matrix, FACE_COLOR_YELLOW, "Human Detected");
     }
 
@@ -218,6 +220,50 @@ static size_t jpg_encode_stream(void * arg, size_t index, const void* data, size
     return len;
 }
 
+
+unsigned char h2int(char c)
+{
+    if (c >= '0' && c <='9'){
+        return((unsigned char)c - '0');
+    }
+    if (c >= 'a' && c <='f'){
+        return((unsigned char)c - 'a' + 10);
+    }
+    if (c >= 'A' && c <='F'){
+        return((unsigned char)c - 'A' + 10);
+    }
+    return(0);
+}
+
+String urlDecode(String str)
+{
+    
+    String encodedString="";
+    char c;
+    char code0;
+    char code1;
+    for (int i =0; i < str.length(); i++){
+        c=str.charAt(i);
+      if (c == '+'){
+        encodedString+=' ';  
+      }else if (c == '%') {
+        i++;
+        code0=str.charAt(i);
+        i++;
+        code1=str.charAt(i);
+        c = (h2int(code0) << 4) | h2int(code1);
+        encodedString+=c;
+      } else{
+        
+        encodedString+=c;  
+      }
+      
+      yield();
+    }
+    
+   return encodedString;
+}
+
 static esp_err_t capture_handler(httpd_req_t *req){
     camera_fb_t * fb = NULL;
     esp_err_t res = ESP_OK;
@@ -225,7 +271,7 @@ static esp_err_t capture_handler(httpd_req_t *req){
 
     fb = esp_camera_fb_get();
     if (!fb) {
-        Serial.println("Camera capture failed");
+        // Serial.println("Camera capture failed");
         httpd_resp_send_500(req);
         return ESP_FAIL;
     }
@@ -252,14 +298,14 @@ static esp_err_t capture_handler(httpd_req_t *req){
         }
         esp_camera_fb_return(fb);
         int64_t fr_end = esp_timer_get_time();
-        Serial.printf("JPG: %uB %ums\n", (uint32_t)(fb_len), (uint32_t)((fr_end - fr_start)/1000));
+        // Serial.printf("JPG: %uB %ums\n", (uint32_t)(fb_len), (uint32_t)((fr_end - fr_start)/1000));
         return res;
     }
 
     dl_matrix3du_t *image_matrix = dl_matrix3du_alloc(1, fb->width, fb->height, 3);
     if (!image_matrix) {
         esp_camera_fb_return(fb);
-        Serial.println("dl_matrix3du_alloc failed");
+        // Serial.println("dl_matrix3du_alloc failed");
         httpd_resp_send_500(req);
         return ESP_FAIL;
     }
@@ -273,7 +319,7 @@ static esp_err_t capture_handler(httpd_req_t *req){
     esp_camera_fb_return(fb);
     if(!s){
         dl_matrix3du_free(image_matrix);
-        Serial.println("to rgb888 failed");
+        // Serial.println("to rgb888 failed");
         httpd_resp_send_500(req);
         return ESP_FAIL;
     }
@@ -296,12 +342,12 @@ static esp_err_t capture_handler(httpd_req_t *req){
     s = fmt2jpg_cb(out_buf, out_len, out_width, out_height, PIXFORMAT_RGB888, 90, jpg_encode_stream, &jchunk);
     dl_matrix3du_free(image_matrix);
     if(!s){
-        Serial.println("JPEG compression failed");
+        // Serial.println("JPEG compression failed");
         return ESP_FAIL;
     }
 
     int64_t fr_end = esp_timer_get_time();
-    Serial.printf("FACE: %uB %ums %s%d\n", (uint32_t)(jchunk.len), (uint32_t)((fr_end - fr_start)/1000), detected?"DETECTED ":"", face_id);
+    // Serial.printf("FACE: %uB %ums %s%d\n", (uint32_t)(jchunk.len), (uint32_t)((fr_end - fr_start)/1000), detected?"DETECTED ":"", face_id);
     return res;
 }
 
@@ -337,7 +383,7 @@ static esp_err_t stream_handler(httpd_req_t *req){
         face_id = 0;
         fb = esp_camera_fb_get();
         if (!fb) {
-            Serial.println("Camera capture failed");
+            // Serial.println("Camera capture failed");
             res = ESP_FAIL;
         } else {
             fr_start = esp_timer_get_time();
@@ -351,7 +397,7 @@ static esp_err_t stream_handler(httpd_req_t *req){
                     esp_camera_fb_return(fb);
                     fb = NULL;
                     if(!jpeg_converted){
-                        Serial.println("JPEG compression failed");
+                        // Serial.println("JPEG compression failed");
                         res = ESP_FAIL;
                     }
                 } else {
@@ -363,11 +409,11 @@ static esp_err_t stream_handler(httpd_req_t *req){
                 image_matrix = dl_matrix3du_alloc(1, fb->width, fb->height, 3);
 
                 if (!image_matrix) {
-                    Serial.println("dl_matrix3du_alloc failed");
+                    // Serial.println("dl_matrix3du_alloc failed");
                     res = ESP_FAIL;
                 } else {
                     if(!fmt2rgb888(fb->buf, fb->len, fb->format, image_matrix->item)){
-                        Serial.println("fmt2rgb888 failed");
+                        // Serial.println("fmt2rgb888 failed");
                         res = ESP_FAIL;
                     } else {
                         fr_ready = esp_timer_get_time();
@@ -391,7 +437,7 @@ static esp_err_t stream_handler(httpd_req_t *req){
                                 free(net_boxes);
                             }
                             if(!fmt2jpg(image_matrix->item, fb->width*fb->height*3, fb->width, fb->height, PIXFORMAT_RGB888, 90, &_jpg_buf, &_jpg_buf_len)){
-                                Serial.println("fmt2jpg failed");
+                                // Serial.println("fmt2jpg failed");
                                 res = ESP_FAIL;
                             }
                             esp_camera_fb_return(fb);
@@ -439,13 +485,13 @@ static esp_err_t stream_handler(httpd_req_t *req){
         last_frame = fr_end;
         frame_time /= 1000;
         uint32_t avg_frame_time = ra_filter_run(&ra_filter, frame_time);
-        Serial.printf("MJPG: %uB %ums (%.1ffps), AVG: %ums (%.1ffps), %u+%u+%u+%u=%u %s%d\n",
+        /* Serial.printf("MJPG: %uB %ums (%.1ffps), AVG: %ums (%.1ffps), %u+%u+%u+%u=%u %s%d\n",
             (uint32_t)(_jpg_buf_len),
             (uint32_t)frame_time, 1000.0 / (uint32_t)frame_time,
             avg_frame_time, 1000.0 / avg_frame_time,
             (uint32_t)ready_time, (uint32_t)face_time, (uint32_t)recognize_time, (uint32_t)encode_time, (uint32_t)process_time,
             (detected)?"DETECTED ":"", face_id
-        );
+        );*/
     }
 
     last_frame = 0;
@@ -620,11 +666,12 @@ static esp_err_t api_handler(httpd_req_t *req)
         httpd_resp_send_404(req);
         return ESP_FAIL;
     }
- 
-    Serial.print(command + '\n');
+
+    Serial.print(urlDecode(command));
+    Serial.print('\n');
 
     // httpd_resp_set_hdr(req, "Access-Control-Allow-Origin", "*");
-    return httpd_resp_send(req, "OK", 0);
+    return httpd_resp_send(req, "OK", 2);
 }
 
 
@@ -668,7 +715,7 @@ void startCameraServer(){
 
     httpd_uri_t api_uri = {
         .uri       = "/api",
-        .method    = HTTP_POST,
+        .method    = HTTP_GET,
         .handler   = api_handler,
         .user_ctx  = NULL
     };
@@ -692,7 +739,7 @@ void startCameraServer(){
     
     face_id_init(&id_list, FACE_ID_SAVE_NUMBER, ENROLL_CONFIRM_TIMES);
     
-    Serial.printf("Starting web server on port: '%d'\n", config.server_port);
+    // Serial.printf("Starting web server on port: '%d'\n", config.server_port);
     if (httpd_start(&camera_httpd, &config) == ESP_OK) {
         httpd_register_uri_handler(camera_httpd, &index_uri);
         httpd_register_uri_handler(camera_httpd, &cmd_uri);
@@ -703,29 +750,8 @@ void startCameraServer(){
 
     config.server_port += 1;
     config.ctrl_port += 1;
-    Serial.printf("Starting stream server on port: '%d'\n", config.server_port);
+    // Serial.printf("Starting stream server on port: '%d'\n", config.server_port);
     if (httpd_start(&stream_httpd, &config) == ESP_OK) {
         httpd_register_uri_handler(stream_httpd, &stream_uri);
     }
-}
-
-
-String* readWiFiConfig(fs::FS &fs, const char * path){
-    String out[2] = {"", ""};
-    char symbol;
-    unsigned short int index = 0;
-
-    File file = fs.open(path);
-    if(!file)
-        return out;
-
-    while(file.available()){
-        symbol = file.read();
-        if(symbol == '\n')
-            index = 1;
-        else
-            out[index] += symbol;
-    }
-
-    return out;
 }

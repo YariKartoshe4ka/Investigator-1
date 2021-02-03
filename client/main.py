@@ -62,10 +62,11 @@ class SettingsScreen(Screen):
         self.add_widget(s)
 
     def scan(self, name):
+        root = App.get_running_app().root
         try:
             return gethostbyname(name)
         except:
-            return ''
+            return root.config.get('network', 'host')
 
 
 

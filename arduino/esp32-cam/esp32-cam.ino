@@ -20,25 +20,10 @@
 
 
 void startCameraServer();
-String* readWiFiConfig(fs::FS &fs, const char * path);
 
 void setup() {
-  // Getting WiFi config from SD card if USE_SD_CARD == true
-  if(!SD_MMC.begin()){
-    // Serial.println("Card Mount Failed");
-    return;
-  }
-  uint8_t cardType = SD_MMC.cardType();
-  
-  if(cardType == CARD_NONE){
-    // Serial.println("No SD_MMC card attached");
-    return;
-  }
-
-  String* out[2] = {readWiFiConfig(SD_MMC, "/wifi.conf")};
-  const char* ssid = out[0]->c_str();
-  const char* password = out[1]->c_str();
-
+  const char* ssid = "11-31";
+  const char* password = "15101977";
 
   Serial.begin(115200);
   // Serial.setDebugOutput(false);
@@ -103,13 +88,18 @@ void setup() {
   s->set_hmirror(s, 1);
 #endif
 
-  WiFi.setHostname("Investigator-1");
+  WiFi.config(INADDR_NONE, INADDR_NONE, INADDR_NONE);
+  WiFi.setHostname("Investigator-1.local");
+  //delay(300);
   WiFi.begin(ssid, password);
-
+  
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
     // Serial.print(".");
   }
+  //WiFi.setHostname("Investigator-1");
+
+  Serial.println(WiFi.getHostname());
   // Serial.println("");
   // Serial.println("WiFi connected");
 
