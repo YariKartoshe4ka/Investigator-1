@@ -7,7 +7,7 @@
 #define SERIAL_TX 11
 #define SERIAL_SPEED 115200
 #define SERIAL_TERMINATOR '\n'
-#define SERIAL_DELAY 3
+#define SERIAL_DELAY 10
 
 // Servo section
 #define SERVO_PIN 9

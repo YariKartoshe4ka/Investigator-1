@@ -57,6 +57,8 @@ class SettingsScreen(Screen):
         s = Settings(on_close=self.close)
 
         root.config.set('network', 'host', self.scan('Investigator-1'))
+        root.config.write()
+
         s.add_json_panel('Network', root.config, 'panels/network.json')
 
         self.add_widget(s)

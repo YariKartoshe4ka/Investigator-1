@@ -12,3 +12,9 @@ My first arduino robot. It has a camera and [remote control](client/)
 
 I wrote full [guide](docs/guide/README.md), how I created this robot.
 
+<!--
+
+Sponsors: school lunches
+Created: in 14 y.o.
+
+-->

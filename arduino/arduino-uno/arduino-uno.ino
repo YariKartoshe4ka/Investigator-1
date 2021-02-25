@@ -43,6 +43,7 @@ String getValue(String data, char separator, int index)
 }
 
 void setup() {
+  Serial.begin(9600);
   SSerial.begin(SERIAL_SPEED);
   while(!SSerial) { /* Wait for ESP32-CAM */ };
 
@@ -129,7 +130,7 @@ void loop() {
   }
   // Motor speed section
   else if(option == "speed") {
-    motors.setSpeed(value.toInt());
+    motors.setSpeed(abs(value.toInt()) > 255 ? 255 : abs(value.toInt()));
   }
 
 

@@ -11,7 +11,10 @@
     - [Building](#building-1)
     - [Flashing Arduino Uno](#flashing-arduino-uno)
 3. [Managing](#managing)
+    - [API](#api)
     - [iClient](#iclient)
+
+
 
 # Preparing
 
@@ -25,7 +28,7 @@ I ordered all the components on AliExpress. This is full price-list of it:
 - [Wires F-M 20sm](components/wires_f-m_20sm.jpg) \~1$
 - [Wires M-M 20sm](components/wires_m-m_20sm.jpg) \~1$
 - [L298N motor driver](components/l298n_motor_driver.jpg) \~1.5$
-- [SG90](components/sg90.jpg) \~1.2$
+- [SG90](components/sg90.jpg) (180-degree only!) \~1.2$
 - [BreadBoard mini](components/breadboard_mini.jpg) \~0.5$
 - [18650 battery](components/18650_battery.jpg) \~2.5$ (if you have got small power bank, you can use it instead of this)
 - [Case for 18650 battery](components/case_for_18650_battery.jpg) \~1$ (if you have got small power bank, you can use it instead of this)
@@ -44,6 +47,8 @@ I found [easy guide](https://www.youtube.com/watch?v=0LIhTLsOLbA) how configure 
 ###### Arduino Uno
 
 You only need to install the L298N library from [here](https://github.com/AndreaLombardo/L298N)
+
+
 
 # Building
 
@@ -99,7 +104,96 @@ Now you need to make sure that WiFi network is working and restart the robot by 
 
 # Managing
 
+### API
+
+Robot is managed by sending HTTP GET requests to [http://Investigator-1/api](http://Investigator-1/api) url. The command is passed in the cmd parameter, i.e. the final url will look like this: [http://Investigator-1/api?cmd=light off](http://Investigator-1/api?cmd=light%20off). The request is processed by ESP32-CAM and sent to the Arduino Uno via Serial. Arduino, in turn, processes the command by simple if-else comparisons and executes it. A table of all commands by default:
+
+<table>
+  <tr>
+    <th>Command</th>
+    <th>Argument</th>
+    <th>Description</th>
+    <th>Default value</th>
+  </tr>
+
+  <!-- motor command section -->
+  <tr>
+    <td rowspan="3">motor</td>
+    <td>forward</td>
+    <td>Set a forward movement</td>
+    <td rowspan="3">stop</td>
+  </tr>
+
+  <tr>
+    <td>backward</td>
+    <td>Set a backward movement</td>
+  </tr>
+
+  <tr>
+    <td>stop</td>
+    <td>Stop a movement</td>
+  </tr>
+  
+  <!-- direction command section -->
+  <tr>
+    <td rowspan="3">direction</td>
+    <td>left</td>
+    <td>Turn to the left</td>
+    <td rowspan="3">stop</td>
+  </tr>
+
+  <tr>
+    <td>right</td>
+    <td>Turn to the right</td>
+  </tr>
+
+  <tr>
+    <td>stop</td>
+    <td>Drive straight</td>
+  </tr>
+
+  <!-- camera command section -->
+  <tr>
+    <td rowspan="3">camera</td>
+    <td>up</td>
+    <td>Turn the camera up</td>
+    <td rowspan="3">stop</td>
+  </tr>
+
+  <tr>
+    <td>down</td>
+    <td>Turn the camera down</td>
+  </tr>
+
+  <tr>
+    <td>stop</td>
+    <td>Stop camera movement</td>
+  </tr>
+
+  <!-- light command section -->
+  <tr>
+    <td rowspan="2">light</td>
+    <td>on</td>
+    <td>Turn on the headlights</td>
+    <td rowspan="2">off</td>
+  </tr>
+
+  <tr>
+    <td>off</td>
+    <td>Turn off the headlights</td>
+  </tr>
+
+  <!-- speed command section -->
+  <tr>
+    <td>speed</td>
+    <td>0&hellip;255</td>
+    <td>Set 0&hellip;255 motor speed</td>
+    <td>0</td>
+  </tr>
+</table>
+
+
 ### iClient
 
-To control the robot you can install [iClient](../../client) (client for Investigator-1, was written by me too).
+To easy control the robot you can install [iClient](../../client) (wrapper for Investigator-1 commands API, was written by me too).
 
