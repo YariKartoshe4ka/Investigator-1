@@ -1,4 +1,4 @@
---requirements python3,kivy==2.0.0rc1,urllib3
+--requirements python3,kivy==2.0.0rc1,urllib3,plyer==2.0.0,android
 --blacklist-requirements sqlite3
 --sdk-dir /home/yaroslav/Android/Sdk/
 --ndk-dir /home/yaroslav/android-ndk-r19c/
@@ -10,4 +10,6 @@
 --version 1.0.0
 --icon /home/yaroslav/Programming/Arduino/investigator/client/icon.png
 --orientation landscape
---permission READ_EXTERNAL_STORAGE WRITE_EXTERNAL_STORAGE
+--permission READ_EXTERNAL_STORAGE
+--permission WRITE_EXTERNAL_STORAGE
+--permission INTERNET

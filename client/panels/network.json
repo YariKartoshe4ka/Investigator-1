@@ -8,9 +8,9 @@
     },
     {
         "type": "numeric",
-        "title": "Port",
-        "desc": "Port of Investigator-1 (default: 80)",
+        "title": "Requests timeout",
+        "desc": "Requests timeout (ms)",
         "section": "network",
-        "key": "port"
+        "key": "timeout"
     }
 ]

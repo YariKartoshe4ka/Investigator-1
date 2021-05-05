@@ -1,0 +1,16 @@
+[
+    {
+        "type": "numeric",
+        "title": "Max FPS",
+        "desc": "Max FPS of stream",
+        "section": "stream",
+        "key": "fps"
+    },
+    {
+        "type": "path",
+        "title": "Images path",
+        "desc": "Path to store saved images",
+        "section": "stream",
+        "key": "save_path"
+    }
+]

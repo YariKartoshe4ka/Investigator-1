@@ -1,4 +1,10 @@
 <MainScreen>:
+    id: main_screen
+    
+    StreamViewer:
+        id: stream_viewer
+        opacity: 0
+
     ActionBar:
         pos_hint: {'top': 1}
 
@@ -17,13 +23,28 @@
                 ActionButton:
                     text: 'Stream'
                     on_press:
-                        root.stream()
+                        root.change_stream_visibility()
 
             ActionGroup:
                 ActionButton:
                     text: 'Settings'
                     on_press:
                         root.manager.current = 'settings'
+
+    Button:
+        id: take_picture_button
+        size_hint: None, None
+        width: 80
+        height: 80
+        background_normal: 'icons/camera_normal.png'
+        background_down: 'icons/camera_down.png'
+        pos_hint: {'top': .6, 'right': .99}
+        border: (0, 0, 0, 0)
+        opacity: 0
+
+        on_press:
+            if self.opacity and not stream_viewer.is_save_image: stream_viewer.is_save_image = True
+
 
     BoxLayout:
 
@@ -79,6 +100,7 @@
                                 if self.active: root.send('light on')
                                 else: root.send('light off')
 
+
             # Left & Rgiht panel
             BoxLayout:
                 spacing: 3
@@ -131,4 +153,3 @@
 
                     on_release:
                         root.send('motor stop')
-

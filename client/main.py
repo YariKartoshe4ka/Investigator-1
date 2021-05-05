@@ -6,8 +6,16 @@ from kivy.config import ConfigParser
 from kivy.network.urlrequest import UrlRequest
 from kivy.utils import platform
 from urllib.parse import quote
-from webbrowser import open
 from socket import gethostbyname
+from stream import StreamViewer
+import os
+import plyer
+
+if platform == 'android':
+    from android.permissions import request_permissions, Permission
+    request_permissions([Permission.WRITE_EXTERNAL_STORAGE,
+                         Permission.READ_EXTERNAL_STORAGE,
+                         Permission.INTERNET])
 
 
 class MainScreen(Screen):
@@ -25,24 +33,24 @@ class MainScreen(Screen):
     def send(self, command):
         root = App.get_running_app().root
 
-        host = root.config.get('network', 'host')
-        port = root.config.get('network', 'port')
+        timeout = root.config.getdefaultint('network', 'timeout', root.config_defaults['network']['timeout'])
+        host = root.config.getdefault('network', 'host', root.config_defaults['network']['host'])
         command = quote(command)
 
-        url = f'http://{host}:{port}/api?cmd={command}'
+        url = f'http://{host}:80/api?cmd={command}'
 
         UrlRequest(url, on_success=self.set_online_true,
                         on_failure=self.set_online_false,
                         on_error=self.set_online_false,
-                        on_redirect=self.set_online_false)
+                        on_redirect=self.set_online_false,
+                        timeout=timeout / 1000)
 
-    def stream(self):
-        root = App.get_running_app().root
-
-        host = root.config.get('network', 'host')
-        port = root.config.get('network', 'port')
-
-        open(f'http://{host}:{port}/')
+    def change_stream_visibility(self):
+        if self.ids['stream_viewer'].is_alive:
+            self.ids['stream_viewer'].stop()
+        else:
+            self.ids['stream_viewer'].start()
+        self.send('ping')
 
 
 
@@ -56,28 +64,44 @@ class SettingsScreen(Screen):
 
         s = Settings(on_close=self.close)
 
-        root.config.set('network', 'host', self.scan('Investigator-1'))
-        root.config.write()
-
         s.add_json_panel('Network', root.config, 'panels/network.json')
+        s.add_json_panel('Stream', root.config, 'panels/stream.json')
 
         self.add_widget(s)
-
-    def scan(self, name):
-        root = App.get_running_app().root
-        try:
-            return gethostbyname(name)
-        except:
-            return root.config.get('network', 'host')
 
 
 
 class InvestigatorClientApp(App):
+    try:
+        host = gethostbyname('Investigator-1')
+    except:
+        host = ''
+    save_path = os.path.join(plyer.storagepath.get_downloads_dir(), 'iClient')
+
+    config_defaults = {'network': {'host': host,
+                                   'timeout': 3000},
+                       'stream': {'fps': 30,
+                                  'save_path': save_path}}
+
+    config_update = {'network': {'host': host}}
+
+
     def build(self):
         sm = ScreenManager(transition=NoTransition())
 
         sm.config = ConfigParser()
         sm.config.read('config.ini')
+
+        for section, options in self.config_defaults.items():
+            sm.config.setdefaults(section, options)
+
+        for section, options in self.config_update.items():
+            for option, value in options.items():
+                if sm.config.get(section, option) == '':
+                    sm.config.set(section, option, value)
+
+        sm.config.write()
+        sm.config_defaults = self.config_defaults
 
         sm.add_widget(MainScreen(name='main'))
         sm.add_widget(SettingsScreen(name='settings'))
