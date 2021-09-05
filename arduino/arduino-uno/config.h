@@ -2,33 +2,27 @@
 #define CONFIG_H
 
 
-// Serial section
-#define SERIAL_RX 10
-#define SERIAL_TX 11
-#define SERIAL_SPEED 115200
-#define SERIAL_TERMINATOR '\n'
-#define SERIAL_DELAY 10
+/* Camera section */
+#define CAMERA_ANGLE_DOWN       0
+#define CAMERA_ANGLE_MIDDLE     67
+#define CAMERA_ANGLE_UP         135
+short CAMERA_ANGLE = 90;
 
-// Servo section
-#define SERVO_PIN 9
-#define SERVO_MAX_ANGLE 135
-#define SERVO_MIN_ANGLE 0
-#define SERVO_DELAY 40
-unsigned short int SERVO_POS = 0;
-String SERVO_DIRECTION = "stop"; // stop/up/down
+/* Motor section */
+#define MOTOR_RUN_STOP          0
+#define MOTOR_RUN_FORWARD       1
+#define MOTOR_RUN_BACKWARD      2
+short MOTOR_RUN = MOTOR_RUN_STOP;
 
-// Light section
-#define LIGHT_PIN 2
+#define MOTOR_DIRECTION_STOP    0
+#define MOTOR_DIRECTION_LEFT    1
+#define MOTOR_DIRECTION_RIGHT   2
+short MOTOR_DIRECTION = MOTOR_DIRECTION_STOP;
 
-// Motor section
-#define EN_A 8
-#define IN1_A 7
-#define IN2_A 6
-#define EN_B 5
-#define IN1_B 4
-#define IN2_B 3
-String MOTOR_RUN = "stop";       // stop/forward/backward
-String MOTOR_DIRECTION = "stop"; // stop/left/right
+#define MOTOR_SPEED_LOW         0
+#define MOTOR_SPEED_MEDIUM      127
+#define MOTOR_SPEED_HIGH        255
+short MOTOR_SPEED = MOTOR_SPEED_LOW;
 
 
-#endif
+#endif /* CONFIG_H */
