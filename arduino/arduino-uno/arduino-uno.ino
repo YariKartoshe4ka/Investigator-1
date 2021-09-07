@@ -19,15 +19,14 @@ void setup() {
   pinMode(LIGHT_PIN, OUTPUT);
 
   servo.attach(SERVO_PIN);
-  servo.write(CAMERA_ANGLE);
-
   motors.stop();
-  motors.setSpeed(0);
+
+  flushCommands();
 }
 
 void loop() {
-  short cnt = -1;
-  byte message[255];
+  short cnt = 0;
+  byte message[MESSAGE_MAX_LENGTH];
   getMessage(message, &cnt);
 
   for (short int i = 0; i < cnt; i++)

@@ -1,9 +1,11 @@
-bool getMessage(byte message[255], short *cnt) {
+bool getMessage(byte message[MESSAGE_MAX_LENGTH], short *cnt) {
   bool collect = false;
   short lost = 0;
 
   while(collect || SSerial.available()) {
-    byte received = (byte)SSerial.read();
+    delay(MESSAGE_DELAY);
+
+    byte received = SSerial.read();
 
     if (received == MESSAGE_FOOTER)
       return false;
@@ -14,13 +16,16 @@ bool getMessage(byte message[255], short *cnt) {
       continue;
     }
 
-    if (received == MESSAGE_HEADER)
+    if (*cnt == MESSAGE_MAX_LENGTH)
+      return true;
+
+    if (received == MESSAGE_HEADER) {
       collect = true;
+      continue;
+    }
 
     if (collect)
       message[++(*cnt)] = received;
-
-    delay(MESSAGE_DELAY);
   }
   return true;
 }
@@ -158,7 +163,7 @@ void flushCommands() {
   motors.setSpeed(MOTOR_SPEED);
 
   short prev_camera_angle = servo.read();
-  short delay_per_angle = 1000 / abs(CAMERA_ANGLE - prev_camera_angle);
+  short delay_per_angle = 700 / abs(CAMERA_ANGLE - prev_camera_angle);
 
   if (prev_camera_angle <= CAMERA_ANGLE)
     for (short current_angle = prev_camera_angle; current_angle < CAMERA_ANGLE; current_angle++) {
