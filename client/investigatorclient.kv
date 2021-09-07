@@ -59,46 +59,39 @@
 
                 BoxLayout:
                     size_hint: (0.5, 0.5)
-
-                    Slider:
-                        orientation: 'vertical'
-                        size_hint_x: 0.3
-                        min: 0
-                        max: 255
-
-                        on_touch_up:
-                            if args[1].grab_current == self: root.send(f'speed {round(self.value)}')
+                    orientation: 'vertical'
+                    spacing: 5
 
                     BoxLayout:
-                        orientation: 'vertical'
-                        spacing: 3
-                        padding: 3
-                        size_hint_x: 0.4
+                        Slider:
+                            orientation: 'vertical'
+                            size_hint_x: 0.3
+                            min: 0
+                            max: 255
+                            step: 1
 
-                        Button:
-                            text: '/\\'
-                            font_size: '20sp'
-                            on_press:
-                                root.send('camera up')
+                            on_touch_up:
+                                if args[1].grab_current == self: root.send_speed(int(self.value))
+                                
 
-                            on_release:
-                                root.send('camera stop')
 
-                        Button:
-                            text: '\\/'
-                            font_size: '20sp'
-                            on_press:
-                                root.send('camera down')
+                        Slider:
+                            orientation: 'vertical'
+                            size_hint_x: 0.3
+                            min: 0
+                            max: 135
+                            step: 1
+                            value: 90
 
-                            on_release:
-                                root.send('camera stop')
+                            on_touch_up:
+                                if args[1].grab_current == self: root.send_angle(int(self.value))
 
-                        Switch:
-                            size_hint: (1, 0.5)
+                    Switch:
+                        size_hint: (1, 0.3)
 
-                            on_active:
-                                if self.active: root.send('light on')
-                                else: root.send('light off')
+                        on_active:
+                            if self.active: root.send(b'\x02')
+                            else: root.send(b'\x03')
 
 
             # Left & Rgiht panel
@@ -111,20 +104,20 @@
                     text: '<'
                     font_size: '30sp'
                     on_press:
-                        root.send('direction left')
+                        root.send(b'\x05')
 
                     on_release:
-                        root.send('direction stop')
+                        root.send(b'\x04')
 
                 Button:
                     text: '>'
                     font_size: '30sp'
                     on_press:
-                        root.send('direction right')
+                        root.send(b'\x06')
 
 
                     on_release:
-                        root.send('direction stop')
+                        root.send(b'\x04')
 
         # Forward & Backward panel
         AnchorLayout:
@@ -140,16 +133,16 @@
                     text: '\\/'
                     font_size: '20sp'
                     on_press:
-                        root.send('motor backward')
+                        root.send(b'\x09')
 
                     on_release:
-                        root.send('motor stop')
+                        root.send(b'\x07')
 
                 Button:
                     text: '/\\'
                     font_size: '20sp'
                     on_press:
-                        root.send('motor forward')
+                        root.send(b'\x08')
 
                     on_release:
-                        root.send('motor stop')
+                        root.send(b'\x07')
