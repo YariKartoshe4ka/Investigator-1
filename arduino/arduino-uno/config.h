@@ -2,12 +2,6 @@
 #define CONFIG_H
 
 
-/* Camera section */
-#define CAMERA_ANGLE_DOWN       0
-#define CAMERA_ANGLE_MIDDLE     67
-#define CAMERA_ANGLE_UP         135
-short CAMERA_ANGLE = 90;
-
 /* Motor section */
 #define MOTOR_RUN_STOP          0
 #define MOTOR_RUN_FORWARD       1

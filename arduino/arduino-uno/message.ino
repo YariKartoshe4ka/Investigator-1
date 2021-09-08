@@ -25,9 +25,9 @@ bool getMessage(byte message[MESSAGE_MAX_LENGTH], short *cnt) {
     }
 
     if (collect)
-      message[++(*cnt)] = received;
+      message[(*cnt)++] = received;
   }
-  return true;
+  return false;
 }
 
 
@@ -126,31 +126,6 @@ bool execCommand(byte command) {
       break;
     }
 
-    case COMMAND_CAMERA_DOWN: {
-      CAMERA_ANGLE = CAMERA_ANGLE_DOWN;
-      break;
-    }
-
-    case COMMAND_CAMERA_MIDDLE: {
-      CAMERA_ANGLE = CAMERA_ANGLE_MIDDLE;
-      break;
-    }
-
-    case COMMAND_CAMERA_UP: {
-      CAMERA_ANGLE = CAMERA_ANGLE_UP;
-      break;
-    }
-
-    case COMMAND_CAMERA_DEC: {
-      CAMERA_ANGLE--;
-      break;
-    }
-
-    case COMMAND_CAMERA_INC: {
-      CAMERA_ANGLE++;
-      break;
-    }
-
     default:
       return false;
   }
@@ -161,18 +136,4 @@ bool execCommand(byte command) {
 
 void flushCommands() {
   motors.setSpeed(MOTOR_SPEED);
-
-  short prev_camera_angle = servo.read();
-  short delay_per_angle = 700 / abs(CAMERA_ANGLE - prev_camera_angle);
-
-  if (prev_camera_angle <= CAMERA_ANGLE)
-    for (short current_angle = prev_camera_angle; current_angle < CAMERA_ANGLE; current_angle++) {
-      servo.write(current_angle);
-      delay(delay_per_angle);
-    }
-  else
-    for (short current_angle = prev_camera_angle; current_angle > CAMERA_ANGLE; current_angle--) {
-      servo.write(current_angle);
-      delay(delay_per_angle);
-    }
 }
