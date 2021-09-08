@@ -6,7 +6,6 @@ from kivy.config import ConfigParser
 from kivy.network.urlrequest import UrlRequest
 from kivy.utils import platform
 from urllib.parse import quote
-from socket import gethostbyname
 import os
 import plyer
 
@@ -71,30 +70,6 @@ class MainScreen(Screen):
 
         self.send(command)
 
-    def send_angle(self, value):
-        command = b''
-
-        closer = lambda x, y, z: x if abs(x - y) <= abs(z - y) else z
-        start = closer(closer(0, value, 67), value, 135)
-
-        if start == 0:
-            command += b'\x0f'
-        elif start == 67:
-            command += b'\x10'
-        else:
-            command += b'\x11'
-
-        length = start - value
-
-        if length > 0:
-            for i in range(abs(length)):
-                command += b'\x13'
-        elif length < 0:
-            for i in range(abs(length)):
-                command += b'\x12'
-
-        self.send(command)
-
     def change_stream_visibility(self):
         if self.ids['stream_viewer'].is_alive:
             self.ids['stream_viewer'].stop()
@@ -121,20 +96,12 @@ class SettingsScreen(Screen):
 
 
 class InvestigatorClientApp(App):
-    try:
-        host = gethostbyname('Investigator-1')
-    except:
-        host = ''
     save_path = os.path.join(plyer.storagepath.get_downloads_dir(), 'iClient')
 
-    config_defaults = {'network': {'host': host,
-                                   'timeout': 3000,
-                                   'logging': False},
+    config_defaults = {'network': {'host': '',
+                                   'timeout': 3000},
                        'stream': {'fps': 30,
                                   'save_path': save_path}}
-
-    config_update = {'network': {'host': host}}
-
 
     def build(self):
         sm = ScreenManager(transition=NoTransition())
@@ -144,11 +111,6 @@ class InvestigatorClientApp(App):
 
         for section, options in self.config_defaults.items():
             sm.config.setdefaults(section, options)
-
-        for section, options in self.config_update.items():
-            for option, value in options.items():
-                if sm.config.get(section, option) == '':
-                    sm.config.set(section, option, value)
 
         sm.config.write()
         sm.config_defaults = self.config_defaults
