@@ -12,5 +12,26 @@
         "desc": "Path to store saved images",
         "section": "stream",
         "key": "save_path"
+    },
+    {
+        "type": "options",
+        "title": "Stream resolution",
+        "desc": "Resolution of stream from camera",
+        "section": "stream",
+        "key": "resolution",
+        "options": [
+            "VGA (640x480)",
+            "CIF (400x296)",
+            "QVGA (320x240)",
+            "HQVGA (240x176)",
+            "QQVGA (160x120)"
+        ]
+    },
+    {
+        "type": "numeric",
+        "title": "Stream rotation",
+        "desc": "Degree rotation of stream",
+        "section": "stream",
+        "key": "rotation"
     }
 ]

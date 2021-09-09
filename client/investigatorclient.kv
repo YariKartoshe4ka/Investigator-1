@@ -1,5 +1,4 @@
 <MainScreen>:
-    id: main_screen
     
     StreamViewer:
         id: stream_viewer
@@ -38,7 +37,7 @@
         height: 80
         background_normal: 'icons/camera_normal.png'
         background_down: 'icons/camera_down.png'
-        pos_hint: {'top': .6, 'right': .99}
+        pos_hint: {'top': .6, 'right': .95}
         border: (0, 0, 0, 0)
         opacity: 0
 
@@ -64,7 +63,6 @@
 
                     Slider:
                         orientation: 'vertical'
-                        # size_hint_x: 0.3
                         min: 0
                         max: 255
                         step: 1

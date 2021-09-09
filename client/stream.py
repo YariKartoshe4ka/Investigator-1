@@ -5,6 +5,7 @@ from kivy.core.image import Image as CoreImage
 from urllib.request import urlopen
 from socket import setdefaulttimeout
 from collections import deque
+from PIL import Image as PILImage
 import plyer
 import datetime
 import threading
@@ -29,14 +30,14 @@ class StreamViewer(Image):
         self._thread.start()
         self._image_lock = threading.Lock()
         self._image_buffer = None
-        Clock.schedule_interval(self.update_image, 1 / root.config.getdefaultint('stream', 'fps', root.config_defaults['stream']['fps']))
+        Clock.schedule_interval(self.update_image, 1 / max(1, root.config.getdefaultint('stream', 'fps', root.config_defaults['stream']['fps'])))
 
     def stop(self, close_thread=True):
         root = App.get_running_app().root
 
         self.is_alive = False
         self.opacity = 0
-        root.children[0].ids['take_picture_button'].opacity = 0
+        root.get_screen('main').ids['take_picture_button'].opacity = 0
         Clock.unschedule(self.update_image)
 
         if close_thread:
@@ -52,6 +53,7 @@ class StreamViewer(Image):
             return
 
         save_path = root.config.getdefault('stream', 'save_path', root.config_defaults['stream']['save_path'])
+        rotation = root.config.getdefaultint('stream', 'rotation', root.config_defaults['stream']['rotation'])
 
         if not os.path.exists(save_path):
             os.makedirs(save_path)
@@ -59,7 +61,7 @@ class StreamViewer(Image):
         if not os.path.isdir(save_path):  
             save_path = root.config_defaults['stream']['save_path']
 
-        root.children[0].ids['take_picture_button'].opacity = 1
+        root.get_screen('main').ids['take_picture_button'].opacity = 1
         self.opacity = 1
 
         self.is_save_image = False
@@ -69,7 +71,7 @@ class StreamViewer(Image):
             try:
                 bytes += stream.read(5 * 1024)
             except:
-                root.children[0].ids['take_picture_button'].opacity = 0
+                root.get_screen('main').ids['take_picture_button'].opacity = 0
                 self.stop(close_thread=False)
                 return
 
@@ -84,7 +86,17 @@ class StreamViewer(Image):
                 data.seek(0)
 
                 try:
-                    im = CoreImage(data,
+                    data_rotated = io.BytesIO()
+
+                    img = PILImage.open(data)
+                    img = img.rotate(rotation, expand=True)
+                    img.save(data_rotated, 'jpeg')
+                    data_rotated.seek(0)
+
+                    img.close()
+                    del data, img
+
+                    im = CoreImage(data_rotated,
                                    ext='jpeg',
                                    nocache=True) 
 
@@ -103,7 +115,7 @@ class StreamViewer(Image):
                                 full_path = full_path.replace(f'({i - 1})', f'({i})')
                                 i += 1
 
-                        im.save(full_path)                 
+                        im.save(full_path)
                 except:
                     continue
 
