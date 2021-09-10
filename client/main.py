@@ -24,12 +24,14 @@ class MainScreen(Screen):
     def set_online_false(self, *args):
         online = self.ids['online']
         online.icon = 'icons/online_false.png'
-        online.size = (30, 30)
+        online.size_hint = (None, 1)
+        online.size = (36, 0)
 
     def set_online_true(self, *args):
         online = self.ids['online']
         online.icon = 'icons/online_true.png'
-        online.size = (30, 30)
+        online.size_hint = (None, 1)
+        online.size = (36, 0)
 
     def send(self, command: bytes):
         root = App.get_running_app().root
@@ -125,10 +127,10 @@ class SettingsScreen(Screen):
 
 
 class InvestigatorClientApp(App):
-    save_path = os.path.join(plyer.storagepath.get_downloads_dir(), 'iClient')
+    save_path = os.path.join(plyer.storagepath.get_documents_dir(), 'iClient')
 
     config_defaults = {'network': {'host': '',
-                                   'timeout': 3000},
+                                   'timeout': 1500},
                        'stream': {'fps': 30,
                                   'save_path': save_path,
                                   'resolution': 'QVGA (320x240)',

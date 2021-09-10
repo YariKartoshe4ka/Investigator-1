@@ -36,6 +36,7 @@ class StreamViewer(Image):
         root = App.get_running_app().root
 
         self.is_alive = False
+        self.is_save_image = False
         self.opacity = 0
         root.get_screen('main').ids['take_picture_button'].opacity = 0
         Clock.unschedule(self.update_image)
@@ -116,6 +117,8 @@ class StreamViewer(Image):
                                 i += 1
 
                         im.save(full_path)
+
+                        plyer.notification.notify(title='Image saved', timeout=2.5, toast=True)
                 except:
                     continue
 
