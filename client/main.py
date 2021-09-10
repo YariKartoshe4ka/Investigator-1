@@ -6,9 +6,6 @@ from kivy.network.urlrequest import UrlRequest
 from kivy.utils import platform
 from urllib.parse import quote
 import os
-import plyer
-
-from stream import StreamViewer
 
 
 if platform == 'android':
@@ -16,6 +13,19 @@ if platform == 'android':
     request_permissions([Permission.WRITE_EXTERNAL_STORAGE,
                          Permission.READ_EXTERNAL_STORAGE,
                          Permission.INTERNET])
+
+    # Android notification fix
+    import jnius
+    original_autoclass = jnius.autoclass
+    def patched_autoclass(clsname, *args, **kwargs):
+        if clsname.endswith('R$drawable'):
+            return None
+        return original_autoclass(clsname, *args, **kwargs)
+    jnius.autoclass = patched_autoclass
+
+import plyer
+
+from stream import StreamViewer
 
 
 class MainScreen(Screen):

@@ -118,7 +118,7 @@ class StreamViewer(Image):
 
                         im.save(full_path)
 
-                        plyer.notification.notify(title='Image saved', timeout=2.5, toast=True)
+                        plyer.notification.notify(message='Image saved', timeout=2.5, toast=True)
                 except:
                     continue
 
