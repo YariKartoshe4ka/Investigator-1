@@ -1,5 +1,4 @@
 from kivy.app import App
-from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.screenmanager import ScreenManager, Screen, NoTransition
 from kivy.uix.settings import Settings
 from kivy.config import ConfigParser
