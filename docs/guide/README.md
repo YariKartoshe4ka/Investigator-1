@@ -7,7 +7,6 @@
         - [Arduino Uno](#arduino-uno)
 2. [Building](#building)
     - [Flashing ESP32-CAM](#flashing-esp32-cam)
-    - [Configuring servo](#configuring-servo)
     - [Building](#building-1)
     - [Flashing Arduino Uno](#flashing-arduino-uno)
 3. [Managing](#managing)
@@ -28,15 +27,15 @@ I ordered all the components on AliExpress. This is full price-list of it:
 - [Wires F-M 20sm](components/wires_f-m_20sm.jpg) \~1$
 - [Wires M-M 20sm](components/wires_m-m_20sm.jpg) \~1$
 - [L298N motor driver](components/l298n_motor_driver.jpg) \~1.5$
-- [SG90](components/sg90.jpg) (180-degree only!) \~1.2$
 - [BreadBoard mini](components/breadboard_mini.jpg) \~0.5$
 - [18650 battery](components/18650_battery.jpg) \~2.5$ (if you have got small power bank, you can use it instead of this)
 - [Case for 18650 battery](components/case_for_18650_battery.jpg) \~1$ (if you have got small power bank, you can use it instead of this)
+- [9v battery](components/9v_battery.jpg) \~5$
 - [Leds](components/leds.jpg) \~1$
 - [USB A to USB B wire](components/wire_usb_a_to_usb_b.jpg) =$0 (included in arduino uno)
-- [Toggle switch button](components/toggle_switch_button.jpg) =0$ (included in chassis)
 
-Full price is: \~41.5$
+Full price is: \~35$
+
 
 ### Setup Arduino IDE
 
@@ -71,34 +70,18 @@ This is schema for flashing ESP32-CAM
 
 
 
-### Configuring servo
-
-Connect servo motor to Arduino Uno with this schema
-
-<img src="../schema/servo_uno.png">
-
-and load [this sketch](../../arduino/servo/servo.ino). It will move servo to 0°. Then put servo on chassis with this schema
-
-<img src="../schema/servo_chassis.png">
-
-
-
 ### Building
 
 Now you can build robot with this schema
 
 <img src="../schema/full.png">
 
-On the chassis, I arranged everything like this
-
-<img src="">
-
 
 ### Flashing Arduino Uno
 
 
 Open [this sketch](../../arduino/arduino-uno/arduino-uno.ino) and load it to Arduino Uno<br>
-Now you need to make sure that WiFi network is working and restart the robot by turning on and off toggle switch button
+Now you need to make sure that WiFi network is working and restart the robot by turning on and off Arduino Uno
 
 
 
@@ -106,92 +89,25 @@ Now you need to make sure that WiFi network is working and restart the robot by 
 
 ### API
 
-Robot is managed by sending HTTP GET requests to [http://Investigator-1/api](http://Investigator-1/api) url. The command is passed in the cmd parameter, i.e. the final url will look like this: [http://Investigator-1/api?cmd=light off](http://Investigator-1/api?cmd=light%20off). The request is processed by ESP32-CAM and sent to the Arduino Uno via Serial. Arduino, in turn, processes the command by simple if-else comparisons and executes it. A table of all commands by default:
+Robot is managed by sending HTTP GET requests to [http://Investigator-1/api](http://Investigator-1/api) url. The message is passed in the cmd parameter. It has this structure: _HEADER_ → _COMMAND\_1_ ... _COMMAND\_N_ → _FOOTER_  i.e. the final url will look like this: [http://Investigator-1/api?cmd=light off](http://Investigator-1/api?cmd=%01%02%FF). The request is processed by ESP32-CAM and sent to the Arduino Uno via Serial. Arduino, in turn, processes the command by simple if-else comparisons and executes it. A table of all commands by default:
 
-<table>
-  <tr>
-    <th>Command</th>
-    <th>Argument</th>
-    <th>Description</th>
-    <th>Default value</th>
-  </tr>
-
-  <!-- motor command section -->
-  <tr>
-    <td rowspan="3">motor</td>
-    <td>forward</td>
-    <td>Set a forward movement</td>
-    <td rowspan="3">stop</td>
-  </tr>
-
-  <tr>
-    <td>backward</td>
-    <td>Set a backward movement</td>
-  </tr>
-
-  <tr>
-    <td>stop</td>
-    <td>Stop a movement</td>
-  </tr>
-  
-  <!-- direction command section -->
-  <tr>
-    <td rowspan="3">direction</td>
-    <td>left</td>
-    <td>Turn to the left</td>
-    <td rowspan="3">stop</td>
-  </tr>
-
-  <tr>
-    <td>right</td>
-    <td>Turn to the right</td>
-  </tr>
-
-  <tr>
-    <td>stop</td>
-    <td>Drive straight</td>
-  </tr>
-
-  <!-- camera command section -->
-  <tr>
-    <td rowspan="3">camera</td>
-    <td>up</td>
-    <td>Turn the camera up</td>
-    <td rowspan="3">stop</td>
-  </tr>
-
-  <tr>
-    <td>down</td>
-    <td>Turn the camera down</td>
-  </tr>
-
-  <tr>
-    <td>stop</td>
-    <td>Stop camera movement</td>
-  </tr>
-
-  <!-- light command section -->
-  <tr>
-    <td rowspan="2">light</td>
-    <td>on</td>
-    <td>Turn on the headlights</td>
-    <td rowspan="2">off</td>
-  </tr>
-
-  <tr>
-    <td>off</td>
-    <td>Turn off the headlights</td>
-  </tr>
-
-  <!-- speed command section -->
-  <tr>
-    <td>speed</td>
-    <td>0&hellip;255</td>
-    <td>Set 0&hellip;255 motor speed</td>
-    <td>0</td>
-  </tr>
-</table>
-
+| Byte | Name                    | Command                              |
+|------|-------------------------|--------------------------------------|
+| 0x01 | MESSAGE_HEADER          | Signals the start of a new message   |
+| 0x02 | COMMAND_LIGHT_ON        | Turns light on                       |
+| 0x03 | COMMAND_LIGHT_OFF       | Turns light off                      |
+| 0x04 | COMMAND_DIRECTION_STOP  | Signals to the car to go straight    |
+| 0x05 | COMMAND_DIRECTION_LEFT  | Signals to the car to turn left      |
+| 0x06 | COMMAND_DIRECTION_RIGHT | Signals to the car to turn right     |
+| 0x07 | COMMAND_RUN_STOP        | Signals to the car to stop           |
+| 0x08 | COMMAND_RUN_FORWARD     | Sginals to the car to go forward     |
+| 0x09 | COMMAND_RUN_BACKWARD    | Sginals to the car to go backward    |
+| 0x0A | COMMAND_SPEED_LOW       | Sets the speed to minimum value (0)  |
+| 0x0B | COMMAND_SPEED_MEDIUM    | Sets the speed to medium value (127) |
+| 0x0C | COMMAND_SPEED_HIGH      | Sets the speed to medium value (255) |
+| 0x0D | COMMAND_SPEED_DEC       | Decreases the speed by one           |
+| 0x0E | COMMAND_SPEED_INC       | Increases the speed by one           |
+| 0xFF | MESSAGE_FOOTER          | Signals the end of a message         |
 
 ### iClient
 
