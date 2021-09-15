@@ -18,9 +18,7 @@ if platform == 'android':
     import jnius
     original_autoclass = jnius.autoclass
     def patched_autoclass(clsname, *args, **kwargs):
-        if clsname.endswith('R$drawable'):
-            return None
-        return original_autoclass(clsname, *args, **kwargs)
+        return None if clsname.endswith('R$drawable') else original_autoclass(clsname, *args, **kwargs)
     jnius.autoclass = patched_autoclass
 
 import plyer

@@ -88,18 +88,13 @@ void setup() {
   s->set_hmirror(s, 1);
 #endif
 
-  WiFi.config(INADDR_NONE, INADDR_NONE, INADDR_NONE);
-  WiFi.setHostname("Investigator-1.local");
-  //delay(300);
   WiFi.begin(ssid, password);
   
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
     // Serial.print(".");
   }
-  //WiFi.setHostname("Investigator-1");
 
-  Serial.println(WiFi.getHostname());
   // Serial.println("");
   // Serial.println("WiFi connected");
 
@@ -112,5 +107,4 @@ void setup() {
 
 void loop() {
   // put your main code here, to run repeatedly:
-  delay(10000);
 }
